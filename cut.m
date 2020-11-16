@@ -7,7 +7,8 @@ if isempty(dir('data/cut'))
     mkdir('data/cut');
 end
 
-h = 180; w = 700;
+h = 180; w = 650; from_center = 130;
+indexes = [];
 for i = 1: n
     
     % 3. b&w and rotate and edge detection
@@ -15,7 +16,7 @@ for i = 1: n
     BWr = preprocessing(RGB);
     
     % 4. show and cut
-    ir = imshow(1-BWr); title(['cutting ' images{i} ' (showing 1-edges)']);
+    ir = imshow(1-BWr); title(['cutting ' images{i} ' (showing 1-edges)'], 'Interpreter', 'none');
     key = -8; % not an ascii
     if i == 1
         [x, y, key] = ginput(1); x = round(x); y = round(y);
@@ -24,7 +25,12 @@ for i = 1: n
     xx = x; yy = y;
     while ~isempty(key) % key pressed is return
         
-        if key == 30 % up arrow
+        if key == 105 % i, zoom in
+            axis([lim(3)-20 lim(4)+20 lim(1)-20 lim(2)+20])
+        elseif key == 111 % o, zoom out
+            axis([1 size(BWr, 1) 1 size(BWr, 2)])
+            axis tight
+        elseif key == 30 % up arrow
             y = y - 5;
         elseif key == 31 % down arrow
             y = y + 5;
@@ -32,18 +38,25 @@ for i = 1: n
             x = x - 5;
         elseif key == 29 % left arrow
             x = x + 5;
+        elseif key == 113 % q
+            BWr = imrotate(BWr, 1, 'bilinear', 'crop');
+            ir = imshow(1-BWr); title(['cutting ' images{i} ' (showing 1-edges)'], 'Interpreter', 'none');
+        elseif key == 119 % w
+            BWr = imrotate(BWr, -1, 'bilinear', 'crop');
+            ir = imshow(1-BWr); title(['cutting ' images{i} ' (showing 1-edges)'], 'Interpreter', 'none');
         else
             x = xx; y = yy;
         end
         
-        lim = [y-h y x x+w];
-        alpha = ones(size(BWr)); alpha(lim(1): lim(2), lim(3): lim(4)) = 0.4;
+        lim = [y-from_center-h y-from_center x x+w];
+        alpha = ones(size(BWr)); alpha(lim(1): lim(2), lim(3): lim(4)) = 0.5;
         set(ir, 'AlphaData', alpha);
 
         [xx, yy, key] = ginput(1); xx = round(xx); yy = round(yy);
     end
     
     cut_image = BWr(lim(1): lim(2), lim(3): lim(4));
+    indexes = [indexes; lim];
     name = split(images{i}, '.');
     save(strcat('data/cut', '/', name{1}, '.mat'),'cut_image')
     
