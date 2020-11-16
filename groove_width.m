@@ -1,4 +1,5 @@
 function width = groove_width(BW1, BW2)
+
     % input:
     % - two binary images with (ideally) only one groove line in each
     % output:

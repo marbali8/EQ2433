@@ -8,18 +8,6 @@ function [BW_line] = groove_lines(BW, col, line)
     % - BW_line = binary image that only contains the line of interest
 
     
-%     [rows, cols] = size(BW);
-%     row_indices_matrix = []; % row j will contain the line indices for the j:th column
-%     for j = col % loop over the columns that voted for the winning number of lines
-%         row_indices = [];
-%         for i = 2:rows
-%             if BW(i-1, j) == 1 && BW(i, j) == 0
-%                 row_indices = [row_indices i-1];
-%             end
-%         end
-%         row_indices_matrix = [row_indices_matrix; row_indices];
-%     end
-    
     % identifying row indices with line crossing for each column
     % row j will contain the line indices for the j:th column, the
     % resulting matrix will be size = [#col, "correct" nlines].
