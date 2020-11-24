@@ -24,6 +24,6 @@ for i = 2: n
         if bwconncomp(l1 + l2).NumObjects > 2
             sprintf('i %d line %d', i, line)
         end
-        saveas(fig, ['animation/' num2str(i) '_' num2str(line)], 'png')
+%         saveas(fig, ['animation/' num2str(i) '_' num2str(line)], 'png')
     end
 end
