@@ -8,7 +8,7 @@ for i = 2: n
     load(strcat('data/cut/', cuts{i}))
     [nr_of_lines, col] = line_counter(cut_image);
     
-    if nr_of_lines ~= 12
+    if nr_of_lines ~=26
         sprintf('i %d nr_of_lines %d', i, nr_of_lines)
     end
     

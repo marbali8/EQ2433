@@ -27,5 +27,5 @@ function [rotated_clean_BW] = preprocessing(image)
     % clean vertical lines
     BW_canny = BW_canny - imerode(BW_canny, [0 1 0; 0 1 0; 0 1 0]);
     % clean away connected components for size <= 10
-    rotated_clean_BW = bwareaopen(BW_canny, 10); 
+    rotated_clean_BW = bwareaopen(BW_canny, 30); 
 end

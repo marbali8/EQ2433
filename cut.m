@@ -77,4 +77,3 @@ for i = 1: n
 %     fprintf(cut_file, '\n%s,%d,%d,%d,%d', name{1}, y, from_center, lim(1), lim(4));
     % if we want to see the cut, we would do im(top:(black-disp), 1:right)
 end
-fclose(cut_file);

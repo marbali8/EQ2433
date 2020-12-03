@@ -1,5 +1,5 @@
 DATA_PATH = 'data';
-CUT_PATH = [DATA_PATH '/cut_equal'];
+CUT_PATH = [DATA_PATH '/cut_equal_higher'];
 
 % 1. read images
 images = {dir([DATA_PATH '/*.png']).name};
@@ -16,8 +16,10 @@ if dir([CUT_PATH '/where.csv']).bytes == 0
     fclose(cut_file);
 end
 
-cut_data = readtable([DATA_PATH '/cut/where.csv']);
-d = cut_data(1, :);
+% cut_data = readtable([DATA_PATH '/cut/where.csv']);
+% d = cut_data(1, :);
+d = table(1, 1303, 15, 579, 1024);
+d.Properties.VariableNames = ["image", "black","disp","top","right"];
 for i = 1: n
     
     % 3. b&w and edge detection
@@ -29,5 +31,3 @@ for i = 1: n
     data = [i, d.black, d.disp, d.top, d.right];
     dlmwrite([CUT_PATH '/where.csv'],data, '-append');
 end
-fclose(cut_file);
-

@@ -1,6 +1,7 @@
 DATA_PATH = 'data';
-CUT_PATH = [DATA_PATH '/cut_equal'];
+% CUT_PATH = [DATA_PATH '/cut_equal'];
 % CUT_PATH = [DATA_PATH '/cut'];
+CUT_PATH = [DATA_PATH '/cut_equal_higher'];
 
 % 1. read images
 images = {dir([DATA_PATH '/*.png']).name};
