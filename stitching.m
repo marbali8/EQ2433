@@ -1,20 +1,28 @@
+% DEFINITIVE second step (0. run cut_straight.m) (cut_image after load cut)
+
 % clc
 % clear all
+clear cut_image
+
 DATA_PATH = 'data';
-CUT_PATH = [DATA_PATH '/cut_equal'];
+% CUT_PATH = [DATA_PATH '/cut_warp_johannes'];
+CUT_PATH = [DATA_PATH '/cut_warp'];
 
 % 1. read images
-images = {dir([DATA_PATH '/*.png']).name};
+% images = {dir([DATA_PATH '/*.png']).name};
+images = {dir([CUT_PATH '/*.mat']).name};
 n = length(images);
 
 % 2. read cut
-cut_data = readtable([CUT_PATH '/where.csv']);
+% cut_data = readtable([CUT_PATH '/where.csv']);
 
-I = imread(strcat([DATA_PATH '/'], images{1}));
-d = cut_data(1, :);
-I = I(d.top-150:(d.black-d.disp)-150, 1:d.right, :);
+load([CUT_PATH '/' images{1}])
+% I = imread([CUT_PATH '/straight_cut' num2str(1) '.png']);
+I = cut_image(600: 1287, :); % TODO (cut here? also in J)
+% d = cut_data(1, :);
+% I = I(d.top-150:(d.black-d.disp)-150, 1:d.right, :); WITH CUT_EQUAL
+% I = I(d.top:(d.black-d.disp), 1:d.right, :);
 % I = I(700: 1360, 1: 1024);
-% I = flip(I, 2);
 
 r_record = 5.3;
 theta = 3.17;
@@ -24,19 +32,23 @@ pixels_per_mm = 207;
 overlap_column = round(chord*pixels_per_mm);
 col_from_end = size(I, 2) - overlap_column; % assumes all Js are same width
 
-coeffs = [];
+stitch_data = [];
 for i = 2: length(images)
     
-    J = imread(strcat([DATA_PATH '/'], images{i}));
-    d = cut_data(i, :);
-    J = J(d.top-150: (d.black - d.disp)-150, 1: d.right, :);
+%     J = imread([CUT_PATH '/' images{i}]);
+%     J = imread([CUT_PATH '/straight_cut' num2str(i) '.png']);
+    load([CUT_PATH '/' images{i}])
+    J = cut_image(600: 1287, :);
+%     d = cut_data(i, :);
+%     J = J(d.top-150: (d.black - d.disp)-150, 1: d.right, :); WITH CUT_EQUAL
+%     J = J(d.top: (d.black - d.disp), 1: d.right, :);
     
 %     J = J(700: 1360, 1: 1024);
 %     J = flip(J, 2);
 %     J = imrotate(J, 3.17, 'bilinear', 'crop');
     new_col = size(I, 2) - col_from_end;
-    [I, maximum] = stitcher(I, J, new_col);
-    coeffs = [coeffs maximum];
+    [I, maxs] = stitcher(I, J, new_col);
+    stitch_data = [stitch_data maxs];
     
     if i > round(0.8*length(images)) && mod(i, 10) == 0
         disp(i)
@@ -44,15 +56,15 @@ for i = 2: length(images)
 end
 H = histeq(I);
 
-for i = 1: 300: size(H, 2)
-    
-    if i + 7000 > size(H, 2)
-        imshow(I(:, i: size(H, 2)))
-    else
-        imshow(I(:, i: i + 7000))
-    end
-    
-    if mod(i, 1000) == 0
-        disp(i)
+show = input('show? [y/n] ') == 'y';
+if show
+    for i = 1: 300: size(H, 2)
+
+        if i + 5000 > size(H, 2)
+            break
+        end
+        imshow(I(1:end, i: i + 5000))
+        ginput(1);
+
     end
 end

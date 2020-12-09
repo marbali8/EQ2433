@@ -1,5 +1,5 @@
 DATA_PATH = 'data';
-CUT_PATH = [DATA_PATH '/cut_equal_higher'];
+CUT_PATH = [DATA_PATH '/cut_straight_imgs'];
 
 % 1. read images
 images = {dir([DATA_PATH '/*.png']).name};
@@ -18,7 +18,8 @@ end
 
 % cut_data = readtable([DATA_PATH '/cut/where.csv']);
 % d = cut_data(1, :);
-d = table(1, 1303, 15, 579, 1024);
+% d = table(1, 1303, 15, 579, 1024);
+d = table(1, 1375, 0, 1, 1024);
 d.Properties.VariableNames = ["image", "black","disp","top","right"];
 for i = 1: n
     
