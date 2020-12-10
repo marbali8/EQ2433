@@ -43,5 +43,4 @@ function [S] = straighten(BW, black)
             S(row, col) = BW(i,j);
         end
     end
-    S = imgaussfilt(S,[0.01 0.9]);
 end

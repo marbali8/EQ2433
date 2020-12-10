@@ -1,8 +1,7 @@
 % DEFINITIVE first step
 
-DATA_PATH = 'data';
-STRAIGHTEN_PATH = [DATA_PATH '/precut_warp'];
-CUT_PATH = [DATA_PATH '/cut_warp'];
+% if it's not ran in main.mlx, doesn't work because there are no paths nor
+% where to cut.
 
 % 1. read images
 images = {dir([DATA_PATH '/*.png']).name};
@@ -15,6 +14,7 @@ end
 if isempty(dir(STRAIGHTEN_PATH))
     mkdir(STRAIGHTEN_PATH);
 end
+straighten = strcmp(input('only cut? [y/n] ', 's'), 'n');
 
 cut_file = fopen([CUT_PATH '/where.csv'],'a');
 if dir([CUT_PATH '/where.csv']).bytes == 0
@@ -22,20 +22,25 @@ if dir([CUT_PATH '/where.csv']).bytes == 0
     fclose(cut_file);
 end
 
-d = table(1, 1375, 0, 1, 1024);
-d.Properties.VariableNames = ["image", "black", "disp", "top", "right"];
 for i = 1: n
     
-    RGB = imread([DATA_PATH '/', images{i}]);
     name = split(images{i}, '.');
+    if straighten
+        
+        RGB = imread([DATA_PATH '/', images{i}]);
     
-    % 3. b&w and straigthen
-    BW = rgb2gray(RGB);
-    S = straighten(BW, d.black);
-    save([STRAIGHTEN_PATH '/' name{1} '.mat'], 'S')
+        % 3. b&w and straigthen
+        BW = rgb2gray(RGB);
+        S = straighten(BW, d.black);
+        save([STRAIGHTEN_PATH '/' name{1} '.mat'], 'S')
+    else
+        S = load([STRAIGHTEN_PATH '/' name{1} '.mat']).S;
+    end
+    %     S = imgaussfilt(S, [1e-5 0.9]);
     
     % 4. cut
     cut_image = S(d.top: (d.black-d.disp), 1: d.right);
+    cut_image = flip(cut_image')';
     save([CUT_PATH '/' name{1} '.mat'], 'cut_image')
     data = [i, d.black, d.disp, d.top, d.right];
     dlmwrite([CUT_PATH '/where.csv'], data, '-append');
